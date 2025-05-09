@@ -1,8 +1,15 @@
 #include <stdio.h>
-#include <locale.h>
+
+long long potencia(int a, int b) {
+    if (b == 0)
+        return 1;  
+    else
+        return a * potencia(a, b - 1);
+}
+
 
 int MDC(int G, int n) {
-    printf("\nVamos verificar se G = %d e inversivel em n = %d com o Algoritmo de Euclides\n", G, n);
+    printf("\nVamos verificar se %d e  %d sao coprimos e consequentemente inversiveis com o Algoritmo de Euclides\n", G, n);
     while (n != 0) {
         printf("\nG = n * q + r\n");
         printf("G: %d, n: %d, q: %d, r : %d\n", G, n, G/n, G % n);
@@ -23,6 +30,7 @@ int MDC(int G, int n) {
 int inverso(int G, int Zn) {
     if (!MDC(G, Zn)) {
         printf("\nNao e possivel calcular o inverso modular: G = %d em Zn = %d; G e n nao sao coprimos.\n", G, Zn);
+        printf("\n nao foi possivel calcular a operacao (H/G mod n)\n");
         return -1;
     }
 
@@ -76,13 +84,81 @@ int divisao(int H, int G, int n) {
     return a;
 }
 
+int primo(int n) {
+    if (n <= 1) {
+        printf("Como %d e menor ou igual a 1, nao e primo.\n", n);
+        return 0;
+    }
+
+    if (n == 2) {
+        printf("%d e primo.\n", n);
+        return 1;
+    }
+
+    if (n % 2 == 0) {
+        printf("%d e divisivel por 2, portanto nao e primo.\n", n);
+        return 0;
+    }
+
+    printf("verificar divisores impares ate a raiz quadrada de %d\n", n);
+    for (int i = 3; i * i <= n; i += 2) {
+        printf("Testando divisor %d...\n", i);
+        if (n % i == 0) {
+            printf("%d e divisivel por %d, portanto nao e primo.\n", n, i);
+            return 0;
+        }
+    }
+
+    printf("Nenhum divisor encontrado. %d e primo.\n", n);
+
+    printf("\n----------------------------------- \n");
+    return 1;
+}
+
+void decompor(int x, int x1, int *q, int *r){
+
+    printf("\nvamos decompor o %d na forma %d = %d + q * r\n", x, x, x1);
+
+    *q = x / x1;
+    printf("\n o quociente da divisao de %d por %d = %d\n\n", x, x1, *q);
+
+    *r = x % x1;
+    printf("\n o resto da divisao de %d por %d = %d\n\n", x, x1, *r);
+
+    printf("assim %d pode ser decomposto na forma %d = %d * %d + %d\n", x, x, x1, *q, *r);
+
+}
+
+void valorX2(int *x2, int a, int n1, int x1){
+    *x2 = potencia(a, x1) % n1;
+
+}
+
+int combinar();
+
+
 int main() {
 
 
     int H = 20, G = 4, n = 3, x = 9, n1 = 5;
+    int x1 = 0;
+    int q;
+    int r;
+    int x2;
 
     int a = divisao(H, G, n);
+    if (a == -1) return 1;
 
+    if (MDC(a, n1));
+
+    if(primo(n1)){
+        x1 = n-1;
+    }
+
+    decompor(x, x1, &q, &r);
+
+    valorX2(&x2, a, n1, x1);
+    
     return 0;
 
 
