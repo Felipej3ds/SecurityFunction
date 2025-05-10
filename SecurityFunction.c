@@ -115,36 +115,105 @@ int primo(int n) {
     return 1;
 }
 
+int totiente_de_Euler(int n){
+    printf("vamos calcular a Funcao Totiente de Euler");
+     if (n <= 0){
+        printf("Erro: n deve ser um inteiro positivo.\n");
+        return 0;
+     }
+
+    if (n == 1) {
+        printf("phi(1) == 1\n");
+        return 1; 
+    }
+
+    int contador = 0;
+    for(int i = 1; i< n; i++){
+        if (MDC(n, i) == 1) contador++;
+    }
+    printf("\n----------------------------------- \n");
+    return contador;
+}
+
 void decompor(int x, int x1, int *q, int *r){
 
-    printf("\nvamos decompor o %d na forma %d = %d + q * r\n", x, x, x1);
+    printf("\nvamos decompor o %d na forma %d = k * q + r\n", x, x, x1);
 
     *q = x / x1;
-    printf("\n o quociente da divisao de %d por %d = %d\n\n", x, x1, *q);
+    printf("\n o quociente q da divisao de %d por %d = %d\n\n", x, x1, *q);
 
     *r = x % x1;
-    printf("\n o resto da divisao de %d por %d = %d\n\n", x, x1, *r);
+    printf("\n o resto r da divisao de %d por %d = %d\n\n", x, x1, *r);
 
-    printf("assim %d pode ser decomposto na forma %d = %d * %d + %d\n", x, x, x1, *q, *r);
+    printf("assim %d pode ser decomposto na forma %d = %d * %d + %d\n\n", x, x, x1, *q, *r);
 
-}
-
-void valorX2(int *x2, int a, int n1, int x1){
-    *x2 = potencia(a, x1) % n1;
+    printf("\n----------------------------------- \n");
 
 }
 
-int combinar();
+int reescrever(int a, int x1, int r, int q, int n1){
+    printf("\n 9. vamos reescrever a exprecao {a^x mod n como a^x congruente a (((a^x1)^q mod n1)(a^r mod n1))mod n1} diretamente\n");
+    int resultado = (potencia(potencia(a, x1), q) % n1) * (potencia(a, r) % n1) % n1;
+    printf(" o resultado da congruencia vai ser %d\n", resultado);
+    printf("\n----------------------------------- \n");
+}
+
+// Função de exponenciação modular: (base^exp) % mod
+long long mod_exp(long long base, long long exp, long long mod) {
+    long long result = 1;
+    base %= mod;
+
+    while (exp > 0) {
+        if (exp % 2 == 1) {
+            result = (result * base) % mod;
+        }
+        exp = exp / 2;
+        base = (base * base) % mod;
+    }
+
+    return result;
+}
+
+// Função principal baseada na fórmula: a^x mod n1
+long long fast_exp_mod(long long a, long long x1, long long q, long long r, long long n1) {
+    printf("Etapa 1: Calcular x2 = a^x1 mod n1\n");
+    printf("         x2 = %lld^%lld mod %lld\n", a, x1, n1);
+    long long x2 = mod_exp(a, x1, n1);
+    printf("         Resultado: x2 = %lld\n\n", x2);
+
+    printf("Etapa 2: Calcular y = x2^q mod n1\n");
+    printf("         y = %lld^%lld mod %lld\n", x2, q, n1);
+    long long y = mod_exp(x2, q, n1);
+    printf("         Resultado: y = %lld\n\n", y);
+
+    printf("Etapa 3: Calcular z = a^r mod n1\n");
+    printf("         z = %lld^%lld mod %lld\n", a, r, n1);
+    long long z = mod_exp(a, r, n1);
+    printf("         Resultado: z = %lld\n\n", z);
+
+    printf("Etapa 4: Combinar os resultados\n");
+    printf("         resultado = (y * z) mod n1 = (%lld * %lld) mod %lld\n", y, z, n1);
+    long long result = (y * z) % n1;
+    printf("         Resultado final: %lld\n", result);
+
+    return result;
+}
+
 
 
 int main() {
 
-
-    int H = 20, G = 4, n = 3, x = 9, n1 = 5;
+    int H = 0;
+    int G = 0; 
+    int n = 0;
+    int x = 0; 
+    int n1 = 0;
     int x1 = 0;
     int q;
     int r;
     int x2;
+
+
 
     int a = divisao(H, G, n);
     if (a == -1) return 1;
@@ -152,12 +221,24 @@ int main() {
     if (MDC(a, n1));
 
     if(primo(n1)){
+        printf("com n1 primo vamos aplicar o Pequeno Teorema de Fermat, e definir x1=n-1\n\n");
         x1 = n-1;
+        printf("\n----------------------------------- \n");
     }
+    else {
+        x1 = totiente_de_Euler(n);
+    }
+
 
     decompor(x, x1, &q, &r);
 
-    valorX2(&x2, a, n1, x1);
+    reescrever(a, x1, r, q, n1);
+
+    printf("vamos calcular os valores intermediarios e Combinar os resultados\n\n");
+
+    fast_exp_mod(a, x1, q, r, n1);
+
+
     
     return 0;
 
